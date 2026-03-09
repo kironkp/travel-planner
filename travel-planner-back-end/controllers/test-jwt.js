@@ -3,14 +3,24 @@ const router = express.Router()
 const jwt = require('jsonwebtoken')
 
 router.get('/sign-token', (req, res) => {
-    const user = {
-        _id: 1,
-        username: 'test',
-        password: 'test',
+    
+
+    try { console.log(process.env.JWT_SECRET)
+
+        const user = {
+        _id: 2,
+        username: 'test1',
+        password: 'test1',
     }
 
-    const token = jwt.sign({user}, process.env.JWT_SECRET)
-    res.json({ token })
+        const token = jwt.sign({user}, process.env.JWT_SECRET)
+        res.json({ token })
+
+    } catch (err) {
+        res.status(401).json({ err: err })
+    }
+
+
 })
 
 router.post('/verify-token', (req, res) => {

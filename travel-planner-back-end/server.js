@@ -1,4 +1,4 @@
-require('dns').setServers(['8.8.8.8', '1.1.1.1']);
+// require('dns').setServers(['8.8.8.8', '1.1.1.1']);
 const dotenv = require('dotenv');
 dotenv.config();
 const express = require('express');
@@ -22,9 +22,11 @@ app.use(express.json());
 app.use(logger('dev'));
 
 // Routes go here
+app.use('/test-jwt', testJwtRouter)
 app.use('/auth', authRouter)
 app.use('/users', userRouter)
-app.use('/test-jwt', testJwtRouter)
+
+console.log(process.env.JWT_SECRET)
 
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
