@@ -23,7 +23,7 @@ router.get('/:userId', verifyToken, async (req, res) => {
             return res.status(404).json({ err: 'user not found' })
         }
 
-        res.json({ user })
+        res.json(user)
     } catch (err) {
         res.status(500).json({ err: err.message })
     }
@@ -37,7 +37,7 @@ router.get('/:userId/trips', verifyToken, async (req, res) => {
        // sorted newest-first by startDate so the UI can render a timeline easily.
             .sort({ startDate: -1 })
             .select('location startDate endDate')
-        res.json({ trips })
+        res.json(trips)
     } catch (err) {
         res.status(500).json({ err: err.message })
     }

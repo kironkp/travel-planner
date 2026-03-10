@@ -7,6 +7,7 @@ const User = require('../models/user')
 const saltRounds = 12
 
 router.post('/sign-up', async (req, res) => {
+    console.log('Sign-up request received:', req.body)
     try {
         const userInDatabase = await User.findOne({ username: req.body.username })
         if(userInDatabase) {
@@ -30,7 +31,7 @@ router.post('/sign-in', async (req, res) => {
     try {
         const user = await User.findOne({ username: req.body.username })
         if(!user) {
-            return res.json(401).json({ err: 'invalid credentials' })
+            return res.status(401).json({ err: 'invalid credentials' })
         }
 
         const isPasswordCorrect = bcrypt.compareSync(req.body.password, user.password)
