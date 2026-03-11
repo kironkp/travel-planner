@@ -18,7 +18,7 @@ router.get('/', verifyToken, async (req, res) => {
 router.get('/:userId', verifyToken, async (req, res) => {
     try {
         // profile view 
-        const user = await User.findById(req.params.userId).select('_id username')
+        const user = await User.findById(req.params.userId).select('_id username createdAt')
         if (!user) {
             return res.status(404).json({ err: 'user not found' })
         }
