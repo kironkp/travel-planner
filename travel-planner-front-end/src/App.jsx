@@ -1,6 +1,10 @@
+//react imports
 import { useState, useContext } from 'react'
+//routing
 import { Route, Routes } from 'react-router'
+//style
 import './App.css'
+//componenets
 import NavBar from './components/NavBar/NavBar'
 import SignUpForm from './components/SignUpForm/SignUpForm'
 import SignInForm from './components/SignInForm/SignInForm'
@@ -11,6 +15,7 @@ import UserProfile from './components/Users/UserProfile'
 import TripForm from './components/Trips/TripForm'
 import TripsIndex from './components/Trips/TripsIndex'
 import TripShow from './components/Trips/TripShow'
+//context imports
 import { UserContext } from './context/UserContext'
 
 function App() {
@@ -27,6 +32,7 @@ function App() {
         <Route path='/users/:userId' element={<UserProfile />} />
         <Route path='/trips' element={<TripsIndex />} />
         <Route path='/trips/new' element={<TripForm />} />
+        <Route path='/trips/:tripId/edit' element={<TripForm />} />
         <Route path='/trips/:tripId' element={<TripShow />} />
       </Routes>
     </>
