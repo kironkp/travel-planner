@@ -1,14 +1,16 @@
 import { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { useParams, useNavigate } from 'react-router'
 import { UserContext } from '../../context/UserContext'
 import * as tripService from '../../services/tripService'
 
 const TripShow = () => {
     const { user } = useContext(UserContext)
+    const navigate = useNavigate()
     const { tripId } = useParams()
     const [trip, setTrip] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [isDeleting, setIsDeleting] = useState(false)
 
     useEffect(() => {
         if (!user) return
@@ -27,6 +29,24 @@ const TripShow = () => {
 
         fetchTrip()
     }, [user, tripId])
+
+    const handleEditClick = () => {
+        navigate(`/trips/${tripId}/edit`)
+    }
+
+    const handleDeleteClick = async () => {
+        if (!window.confirm('Are you sure you want to delete this trip?')) return
+        setIsDeleting(true)
+        setError(null)
+        try {
+            await tripService.destroy(tripId)
+            navigate('/trips')
+        } catch (err) {
+            setError(err.message || 'Unable to delete this trip.')
+        } finally {
+            setIsDeleting(false)
+        }
+    }
 
     if (!user) {
         return (
@@ -77,8 +97,22 @@ const TripShow = () => {
             {trip.tips ? (
                 <p><strong>Tips:</strong> {trip.tips}</p>
             ) : null}
+            <div>
+                <button type='button' onClick={handleEditClick}>
+                    Edit Trip
+                </button>
+                <button
+                    type='button'
+                    onClick={handleDeleteClick}
+                    disabled={isDeleting}
+                    style={{ marginLeft: '1rem', backgroundColor: '#c0392b', color: '#fff' }}
+                >
+                    {isDeleting ? 'Deleting...' : 'Delete Trip'}
+                </button>
+            </div>
         </main>
     )
 }
+
 
 export default TripShow
