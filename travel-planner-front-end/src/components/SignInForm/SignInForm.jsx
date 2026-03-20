@@ -78,7 +78,7 @@ const SignInForm = () => {
           />
         </div>
         <div>
-          <button>Sign In</button>
+          <button type='submit'>Sign In</button>
           <button type='button' onClick={signInWithGoogle}>Sign In With Google</button>
           <button type='button' className='danger-btn' onClick={() => navigate('/')}>Cancel</button>
         </div>

@@ -53,3 +53,16 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+button[type='submit'] {
+  background-color: #16a34a;
+  color: #ffffff;
+  border-color: #15803d;
+}
+button[type='submit']:hover:not(:disabled) {
+  background-color: #15803d;
+  border-color: #166534;
+}
+button[type='submit']:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

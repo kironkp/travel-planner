@@ -13,8 +13,8 @@ const TripShow = () => {
     const [error, setError] = useState(null)
     const [isDeleting, setIsDeleting] = useState(false)
     const [commentText, setCommentText] = useState('')
-    const [isSubmittingComment, setIsSubmittingComment] = useState(false)
     const [commentError, setCommentError] = useState('')
+    const [isSubmittingComment, setIsSubmittingComment] = useState(false)
 
     useEffect(() => {
         if (!user) return
@@ -54,13 +54,13 @@ const TripShow = () => {
 
     const handleCommentSubmit = async (evt) => {
         evt.preventDefault()
-        const nextComment = commentText.trim()
-        if (!nextComment) return
+        const nextCommentText = commentText.trim()
+        if (!nextCommentText) return
 
         setCommentError('')
         setIsSubmittingComment(true)
         try {
-            const data = await tripService.createComment(tripId, nextComment)
+            const data = await tripService.createComment(tripId, nextCommentText)
             setTrip(data.trip || trip)
             setCommentText('')
         } catch (err) {
@@ -137,11 +137,10 @@ const TripShow = () => {
             {trip.tips ? (
                 <p><strong>Tips:</strong> {trip.tips}</p>
             ) : null}
-
-            <section style={{ marginTop: '1.25rem' }}>
+            <section style={{ marginTop: '1.2rem' }}>
                 <h2>Comments</h2>
                 {comments.length === 0 ? (
-                    <p>No comments yet. Be the first to share a thought.</p>
+                    <p>No comments yet.</p>
                 ) : (
                     <ul className='dashboard-list'>
                         {comments.map((comment) => {
@@ -150,34 +149,33 @@ const TripShow = () => {
 
                             return (
                                 <li key={commentId} style={{ marginBottom: '0.75rem' }}>
-                                    <p style={{ margin: 0 }}>
-                                        <strong>{authorName}:</strong> {comment.text}
-                                    </p>
+                                    <strong>{authorName}:</strong> {comment.text}
                                 </li>
                             )
                         })}
                     </ul>
                 )}
 
-                <form onSubmit={handleCommentSubmit} style={{ marginTop: '1rem' }}>
-                    <label htmlFor='comment-text'>Leave a comment:</label>
-                    <textarea
-                        id='comment-text'
-                        name='commentText'
-                        rows='3'
-                        value={commentText}
-                        onChange={(evt) => setCommentText(evt.target.value)}
-                        placeholder='Share tips, feedback, or encouragement'
-                        style={{ width: '100%', marginTop: '0.4rem' }}
-                        required
-                    />
-                    {commentError ? <p>{commentError}</p> : null}
-                    <button type='submit' disabled={isSubmittingComment || !commentText.trim()}>
-                        {isSubmittingComment ? 'Posting...' : 'Post Comment'}
-                    </button>
-                </form>
+                
+                    <form onSubmit={handleCommentSubmit} style={{ marginTop: '0.75rem' }}>
+                        <label htmlFor='commentText'>Leave a comment:</label>
+                        <textarea
+                            id='commentText'
+                            name='commentText'
+                            rows='3'
+                            value={commentText}
+                            onChange={(evt) => setCommentText(evt.target.value)}
+                            style={{ width: '100%', marginTop: '0.45rem' }}
+                            placeholder='Share something helpful!'
+                            required
+                        />
+                        {commentError ? <p>{commentError}</p> : null}
+                        <button type='submit' disabled={isSubmittingComment || !commentText.trim()}>
+                            {isSubmittingComment ? 'Posting...' : 'Post Comment'}
+                        </button>
+                    </form>
+                
             </section>
-
             {isOwner ? (
                 <div>
                     <button type='button' onClick={handleEditClick}>
