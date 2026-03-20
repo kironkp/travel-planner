@@ -24,9 +24,23 @@ function isOwner(trip, userId) {
   return trip.user && trip.user.toString() === userId
 }
 
+function normalizePhotoUrl(photoUrl) {
+  if (!photoUrl) return null
+  return photoUrl.replace(/^http:\/\//i, 'https://')
+}
+
+function getRequestOrigin(req) {
+  const forwardedProto = req.get('x-forwarded-proto')
+  const protocol = (forwardedProto ? forwardedProto.split(',')[0] : req.protocol) || 'https'
+  return `${protocol}://${req.get('host')}`
+}
+
 function buildPhotoUrl(req, trip) {
-  if (!trip.photoStoragePath) return null
-  return `${req.protocol}://${req.get('host')}/trips/${trip.id || trip._id}/photo`
+  if (trip.photoStoragePath) {
+    return `${getRequestOrigin(req)}/trips/${trip.id || trip._id}/photo`
+  }
+
+  return normalizePhotoUrl(trip.photoUrl)
 }
 
 async function serializeTrip(trip, req) {

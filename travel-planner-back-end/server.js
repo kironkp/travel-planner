@@ -21,6 +21,8 @@ const tripsRouter = require('./controllers/trips')
 const app = express();
 const PORT = process.env.PORT || 3000
 
+app.set('trust proxy', 1)
+
 mongoose.connection.on('connected', () => {
   console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
 });
