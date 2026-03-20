@@ -109,6 +109,35 @@ router.get('/:tripId', verifyToken, async (req, res) => {
   }
 })
 
+router.post('/:tripId/comments', verifyToken, async (req, res) => {
+  try {
+    const trip = await Trip.findById(req.params.tripId)
+    if (!trip) return res.status(404).json({ err: 'trip not found' })
+
+
+    const text = (req.body?.text || '').trim()
+    if (!text) {
+      return res.status(400).json({ err: 'comment text is required' })
+    }
+
+    trip.comments.push({
+      author: req.user._id,
+      text,
+    })
+
+    await trip.save()
+
+    const populatedTrip = await Trip.findById(trip._id)
+      .populate('user', 'username')
+      .populate('comments.author', 'username')
+
+    const serializedTrip = await serializeTrip(populatedTrip, req)
+    res.status(201).json({ trip: serializedTrip })
+  } catch (err) {
+    res.status(500).json({ err: err.message })
+  }
+})
+
 router.post('/', verifyToken, upload.single('photo'), async (req, res) => {
   try {
    const { location, accommodations, startDate, endDate, tips } = req.body || {}

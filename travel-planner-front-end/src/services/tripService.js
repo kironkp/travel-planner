@@ -73,6 +73,21 @@ const update = async (tripId, formData) => {
     }
 }
 
+const createComment = async (tripId, text) => {
+    try {
+        const res = await fetch(`${BASE_URL}/${tripId}/comments`, {
+            method: 'POST',
+            headers: getAuthHeaders(true),
+            body: JSON.stringify({ text }),
+        })
+
+        return await handleResponse(res)
+    } catch (err) {
+        console.log(err)
+        throw new Error(err)
+    }
+}
+
 // Delete an existing trip
 const destroy = async (tripId) => {
     try {
@@ -94,5 +109,6 @@ export {
     listFeed,
     show,
     update,
+    createComment,
     destroy
 }
