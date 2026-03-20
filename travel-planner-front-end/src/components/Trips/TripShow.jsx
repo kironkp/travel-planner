@@ -12,6 +12,9 @@ const TripShow = () => {
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
     const [isDeleting, setIsDeleting] = useState(false)
+    const [commentText, setCommentText] = useState('')
+    const [commentError, setCommentError] = useState('')
+    const [isSubmittingComment, setIsSubmittingComment] = useState(false)
 
     useEffect(() => {
         if (!user) return
@@ -46,6 +49,24 @@ const TripShow = () => {
             setError(err.message || 'Unable to delete this trip.')
         } finally {
             setIsDeleting(false)
+        }
+    }
+
+    const handleCommentSubmit = async (evt) => {
+        evt.preventDefault()
+        const nextCommentText = commentText.trim()
+        if (!nextCommentText) return
+
+        setCommentError('')
+        setIsSubmittingComment(true)
+        try {
+            const data = await tripService.createComment(tripId, nextCommentText)
+            setTrip(data.trip || trip)
+            setCommentText('')
+        } catch (err) {
+            setCommentError(err.message || 'Unable to post comment.')
+        } finally {
+            setIsSubmittingComment(false)
         }
     }
 
@@ -91,6 +112,7 @@ const TripShow = () => {
             : trip.user?._id || trip.user?.id
     const isOwner = tripOwnerId === user._id
     const fromFeed = location.state?.fromFeed === true
+    const comments = Array.isArray(trip.comments) ? trip.comments : []
 
     return (
         <main className='dashboard'>
@@ -115,6 +137,45 @@ const TripShow = () => {
             {trip.tips ? (
                 <p><strong>Tips:</strong> {trip.tips}</p>
             ) : null}
+            <section style={{ marginTop: '1.2rem' }}>
+                <h2>Comments</h2>
+                {comments.length === 0 ? (
+                    <p>No comments yet.</p>
+                ) : (
+                    <ul className='dashboard-list'>
+                        {comments.map((comment) => {
+                            const commentId = comment._id || comment.id
+                            const authorName = comment.author?.username || 'Traveler'
+
+                            return (
+                                <li key={commentId} style={{ marginBottom: '0.75rem' }}>
+                                    <strong>{authorName}:</strong> {comment.text}
+                                </li>
+                            )
+                        })}
+                    </ul>
+                )}
+
+                
+                    <form onSubmit={handleCommentSubmit} style={{ marginTop: '0.75rem' }}>
+                        <label htmlFor='commentText'>Leave a comment:</label>
+                        <textarea
+                            id='commentText'
+                            name='commentText'
+                            rows='3'
+                            value={commentText}
+                            onChange={(evt) => setCommentText(evt.target.value)}
+                            style={{ width: '100%', marginTop: '0.45rem' }}
+                            placeholder='Share something helpful!'
+                            required
+                        />
+                        {commentError ? <p>{commentError}</p> : null}
+                        <button type='submit' disabled={isSubmittingComment || !commentText.trim()}>
+                            {isSubmittingComment ? 'Posting...' : 'Post Comment'}
+                        </button>
+                    </form>
+                
+            </section>
             {isOwner ? (
                 <div>
                     <button type='button' onClick={handleEditClick}>
